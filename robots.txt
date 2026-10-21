@@ -1,0 +1,3 @@
+User-agent: *
+Allow: /
+Sitemap: https://avirmath-site.vercel.app/sitemap.xml
