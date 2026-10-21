@@ -1,0 +1,202 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>What Is Backpropagation? The Chain Rule That Trains Every Neural Network · Avirmath AI</title><meta name="description" content="Backpropagation is the algorithm that computes how much a neural network&#x27;s error changes with respect to every weight, in a single backward pass, by applying the chain rule from the output back to the input. Published for neural networks by Rumelhart, Hinton and Williams in 1986, it supplies the gra">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Source+Serif+4:opsz,wght@8..60,400;8..60,600&family=Space+Grotesk:wght@600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/katex.min.css"><script src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/katex.min.js"></script>
+<style>
+:root{--bg:#FFFFFF;--bg2:#F5F7FB;--ink:#111827;--ink2:#374151;--mute:#5B6472;--line:#E5E7EB;--line2:#CBD5E1;--primary:#2563EB;--primary-2:#1D4ED8;--primary-soft:#EFF4FF;--amber:#B45309;--green:#15803D;--green-soft:#F0FDF4;
+--sans:"Inter",system-ui,sans-serif;--serif:"Source Serif 4",Georgia,serif;--brand:"Space Grotesk",var(--sans)}
+*{box-sizing:border-box;margin:0;padding:0}html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--ink);font-family:var(--sans);font-size:17px;line-height:1.6;-webkit-font-smoothing:antialiased}
+a{color:inherit;text-decoration:none}
+.nav{display:flex;align-items:center;justify-content:space-between;padding:18px 56px;border-bottom:1px solid var(--line);background:#fff;position:sticky;top:0;z-index:15}
+.logo{display:flex;align-items:center;gap:9px;font-family:var(--brand);font-weight:700;font-size:21px}.logo .fa{color:var(--primary);font-size:25px;line-height:1}.logo b{color:var(--primary)}
+.nav .links{display:flex;gap:32px;color:var(--ink2);font-size:15.5px;font-weight:500}.nav .links a:hover{color:var(--primary)}
+.btn{display:inline-flex;align-items:center;gap:8px;background:var(--primary);color:#fff;font-weight:600;padding:12px 22px;border-radius:8px;font-size:15.5px}.btn:hover{background:var(--primary-2)}
+.btn.ghost{background:#fff;color:var(--ink);border:1px solid var(--line2)}
+.wrap{max-width:1160px;margin:0 auto;padding:0 56px}
+.hero{display:grid;grid-template-columns:1fr 1.05fr;gap:56px;align-items:center;padding:80px 0 64px}
+.eyebrow{font-size:13px;letter-spacing:.1em;text-transform:uppercase;color:var(--primary);font-weight:600;margin-bottom:18px}
+.hero h1{font-size:54px;line-height:1.08;letter-spacing:-.025em;font-weight:700}.hero h1 span{color:var(--primary)}
+.hero p{color:var(--ink2);font-size:19px;margin:22px 0 26px;max-width:34em}
+.sub{display:flex;gap:10px;align-items:center;max-width:440px;margin-bottom:18px}.sub input{flex:1;border:1px solid var(--line2);border-radius:8px;padding:11px 14px;font:inherit;font-size:15.5px}
+.updates{display:flex;align-items:center;gap:14px;color:var(--mute);font-size:14px;margin-bottom:30px}.updates a{width:32px;height:32px;border:1px solid var(--line);border-radius:8px;display:grid;place-items:center;color:var(--ink2)}.updates a:hover{border-color:var(--primary);color:var(--primary)}.updates svg{width:16px;height:16px;fill:currentColor}
+.stats{display:flex;gap:40px;padding-top:26px;border-top:1px solid var(--line)}.stats b{display:block;font-size:26px;letter-spacing:-.02em}.stats span{color:var(--mute);font-size:14px}
+.poster{border:1px solid var(--line);border-radius:12px;overflow:hidden;background:#000}.poster video,.poster img{display:block;width:100%}
+.band{background:var(--bg2);border-top:1px solid var(--line);border-bottom:1px solid var(--line);padding:56px 0}
+h2.sec{font-size:34px;letter-spacing:-.02em;margin:0 0 8px;font-weight:700}p.subt{color:var(--ink2);margin-bottom:30px;font-size:18px}
+section.block{padding:72px 0}
+.feed{display:flex;flex-direction:column;gap:18px}
+.post{display:grid;grid-template-columns:300px 1fr;gap:26px;align-items:center;border:1px solid var(--line);border-radius:12px;background:#fff;overflow:hidden;transition:box-shadow .2s,border-color .2s}
+.post:hover{border-color:var(--line2);box-shadow:0 10px 30px rgba(17,24,39,.08)}
+.post img{width:300px;height:100%;object-fit:cover;aspect-ratio:16/10;display:block;background:#0E1117}
+.post .pb{padding:20px 24px 20px 0}.post h3{font-size:22px;letter-spacing:-.015em;margin:8px 0 6px}.post p{color:var(--ink2);font-size:15.5px;max-width:62ch}
+.post .by{display:flex;align-items:center;gap:8px;color:var(--mute);font-size:13.5px;margin-top:12px}.post .by i{width:24px;height:24px;border-radius:50%;background:var(--primary);color:#fff;display:grid;place-items:center;font-style:normal;font-size:12px;font-weight:700}
+.tags{display:flex;gap:8px;flex-wrap:wrap}.t{font-size:12px;font-weight:600;padding:3px 9px;border-radius:999px;border:1px solid var(--line);color:var(--ink2);background:var(--bg2)}.t.live{color:var(--green);border-color:#BBF7D0;background:var(--green-soft)}
+.post.soon img{filter:grayscale(.6);opacity:.7}.post.soon .ph{width:300px;aspect-ratio:16/10;background:var(--bg2);display:grid;place-items:center;color:var(--mute);font-size:14px}
+.pipe{display:grid;grid-template-columns:repeat(6,1fr);margin-top:36px}.pipe .st{padding:22px 18px 20px;border:1px solid var(--line);background:#fff;position:relative}.pipe .st:first-child{border-radius:12px 0 0 12px}.pipe .st:last-child{border-radius:0 12px 12px 0}.pipe .st+.st{border-left:0}
+.pipe .st b{display:block;font-size:15.5px;margin-bottom:6px}.pipe .st span{display:block;color:var(--mute);font-size:13.5px;line-height:1.45}
+.pipe .gate{position:absolute;right:-11px;top:26px;z-index:2;width:22px;height:22px;border-radius:50%;background:#fff;border:2px solid var(--green);color:var(--green);display:grid;place-items:center;font-size:12px;font-weight:700;font-style:normal}.pipe .st:last-child .gate{display:none}
+.principles{display:grid;grid-template-columns:repeat(3,1fr);gap:22px}.principles .p{padding:24px;border:1px solid var(--line);border-radius:12px;background:#fff}.principles .p b{display:block;font-size:17px;margin-bottom:8px}.principles .p span{color:var(--ink2);font-size:15px}
+.trust{display:flex;gap:28px;flex-wrap:wrap;color:var(--ink2);font-size:15px;margin-top:44px}.trust div b{display:block;font-size:30px;letter-spacing:-.02em;color:var(--ink)}
+footer{display:grid;grid-template-columns:1.6fr 1fr 1fr 1fr;gap:28px;align-items:start;padding:44px 56px 36px;border-top:1px solid var(--line);background:var(--bg2);color:var(--mute);font-size:14.5px}
+footer .fl{display:flex;flex-direction:column;gap:8px}footer .fl b{color:var(--ink);margin-bottom:4px}footer .fc{grid-column:1/-1;border-top:1px solid var(--line);padding-top:16px;font-size:13.5px}
+/* lesson */
+.crumb{color:var(--mute);font-size:14.5px;padding:26px 0 12px}.ltitle{font-size:38px;letter-spacing:-.025em;margin-bottom:8px;font-weight:700;max-width:22ch}
+.lmeta{color:var(--mute);font-size:15px;margin-bottom:24px;display:flex;gap:18px;flex-wrap:wrap}
+.lgrid{display:grid;grid-template-columns:240px 1fr;gap:40px;align-items:start;padding-top:8px}
+.menu{position:sticky;top:96px}.menu .mt{font-size:12px;letter-spacing:.1em;text-transform:uppercase;color:var(--mute);font-weight:600;margin:0 0 10px 12px}
+.menu a{display:flex;align-items:center;gap:10px;padding:8px 12px;border-radius:8px;color:var(--ink2);font-size:15px;border-left:2px solid transparent}.menu a:hover{background:var(--bg2)}.menu a.on{color:var(--primary);font-weight:600;background:var(--primary-soft);border-left-color:var(--primary)}
+.menu a .n{width:22px;height:22px;border-radius:50%;border:1.5px solid var(--line2);display:grid;place-items:center;font-size:11px;color:var(--mute);flex:none}
+.sec-l{padding:36px 0;border-top:1px solid var(--line);scroll-margin-top:96px}.sec-l:first-of-type{border-top:0;padding-top:0}
+.sec-l .k{font-size:13px;color:var(--mute);margin-bottom:4px;display:flex;gap:14px;align-items:center}.sec-l .k a{color:var(--primary);font-weight:600;cursor:pointer}
+.sec-l h2{font-size:28px;letter-spacing:-.02em;margin-bottom:14px}.sec-l p{color:var(--ink2);font-size:17.5px;font-family:var(--serif);line-height:1.65;max-width:68ch;margin-bottom:12px}
+.eq{text-align:center;padding:16px;background:var(--bg2);border-radius:8px;margin:14px 0;font-size:20px;border:1px solid var(--line);overflow-x:auto}
+.callout{border-left:3px solid var(--primary);background:var(--primary-soft);padding:14px 18px;border-radius:0 8px 8px 0;margin:16px 0;font-size:15.5px}
+.q{border:1px solid var(--line);border-radius:10px;padding:18px 20px;margin-top:14px}.q p{margin-bottom:12px;font-family:var(--sans);font-size:16.5px;color:var(--ink)}
+.q details{margin-top:6px}.q summary{cursor:pointer;color:var(--primary);font-weight:600;font-size:15px}.q .a{margin-top:8px;color:var(--ink2);font-size:15.5px}
+.src{color:var(--mute);font-size:14px}.src li{margin-left:18px;margin-bottom:4px}
+@media (max-width:900px){.hero,.principles,.pipe,.lgrid{grid-template-columns:1fr!important}.post{grid-template-columns:1fr}.post img,.post.soon .ph{width:100%}.post .pb{padding:18px}.nav,.wrap,footer{padding-left:20px;padding-right:20px}.nav .links{display:none}.menu{position:static}footer{grid-template-columns:1fr 1fr}.hero h1{font-size:38px}}
+</style><script type="application/ld+json">[
+ {
+  "@context": "https://schema.org",
+  "@type": "VideoObject",
+  "name": "What Is Backpropagation? The Chain Rule That Trains Every Neural Network",
+  "description": "Backpropagation is the algorithm that computes how much a neural network's error changes with respect to every weight, in a single backward pass, by applying the chain rule from the output back to the input. Published for neural networks by Rumelhart, Hinton and Williams in 1986, it supplies the gradient that gradient descent uses to train every modern network.",
+  "duration": "PT5M9S",
+  "inLanguage": "en-GB",
+  "transcript": "What is backpropagation? It is the chain rule, organised so that one backward sweep gives the derivative of the error with respect to every weight in a network, all at once. Gradient descent takes the step. Backpropagation supplies the direction. Together they are how every neural network learns. Here is the obvious way to find a slope. Nudge one weight, run the whole network again, and see how the error moved. That is one full pass, for one weight. A thousand weights means a thousand and one passes. A billion weights means a billion and one. In nineteen seventy, Seppo Linnainmaa showed there is a better way, and in nineteen seventy-four Paul Werbos applied it to neural networks. One forward pass. One backward pass. Every derivative. It rests on one fact from calculus. If y depends on u, and u depends on x, then a small nudge in x is scaled once by d u by d x, and again by d y by d u. Rates multiply. Watch the nudge travel. It enters at x, is stretched by the first slope, then by the second. The total stretch is the product. A network is just a longer chain. Take the smallest network that has a hidden layer. Input x, weight w one, a sigmoid, weight w two, output y hat, and a squared error. Two weights. Four stages. Forward pass, with numbers. x is 1.5, w one is 0.8, so z is 1.2. The sigmoid gives h equals 0.769. w two is -0.4, so y hat is -0.307. The target is 1. The error is 1.709. Now backwards. The error depends on y hat through the square, so d L by d y hat is two times y hat minus y: -2.615. y hat is w two times h, so the slope with respect to w two is that number times h: -2.01. The first weight is done. To reach w one we must pass through h. The slope with respect to h is d L by d y hat, times w two: 1.046. Keep this number. Everything before h will reuse it. h is the sigmoid of z, and the sigmoid's slope is sigma times one minus sigma: here 0.178. z is w one times x. Multiply the chain: 1.046, times 0.178, times 1.5. d L by d w one is 0.279. Two derivatives, one backward sweep. Hand them to gradient descent with eta equal to 0.5: w one becomes 0.66, w two becomes 0.605, and the error falls from 1.709 to 0.312. Notice what we reused. The slope at h was computed once, and every weight upstream of h multiplied by it. In a wide layer, hundreds of weights share the same number. Call that shared quantity delta: the slope of the error with respect to a layer's inputs. Delta for one layer is the next layer's delta, pulled back through its weights, times the sigmoid slope. And the gradient of a weight matrix is simply delta times the layer's input. Three lines. Any depth. Here is the proof you can run. Take the backward-sweep gradient, and the nudge-and-remeasure gradient, on the same surface. The arrows coincide, to six decimal places. In nineteen eighty-six, Rumelhart, Hinton and Williams published this in Nature, and showed that the hidden layers learn useful features on their own. Three years later, Yann LeCun's group trained a network by backpropagation to read handwritten postcodes for the United States Postal Service: 9298 digits, about one percent error. Here is a small version. 600 noisy eight-by-eight digits, a network with one hidden layer, and nothing but the three lines you just saw. It starts at 61 percent. After 40 passes through the data it reads 91 percent correctly. Today nobody writes these derivatives by hand. Frameworks record the forward computation as a graph and run the backward sweep automatically. The algorithm is unchanged, from two weights to hundreds of billions. But the chain rule has a cost. Each sigmoid layer multiplies the backward signal by at most a quarter. Six layers deep, the gradient reaching the first weights is thousands of times smaller than at the output. That is the vanishing gradient, and it is why the next lessons exist: better activations, residual connections, normalisation. So, what is backpropagation? The chain rule, run backwards through a network, giving every weight's derivative in one sweep. When? Linnainmaa, nineteen seventy. Werbos, nineteen seventy-four. Rumelhart, Hinton and Williams, nineteen eighty-six. How is it used in A.I.? Every training step of every network: forward pass, backward pass, gradient descent step. Next: vectors and the dot product.",
+  "keywords": "backpropagation, what is backpropagation, chain rule, gradient of a neural network, reverse-mode automatic differentiation, delta rule, vanishing gradient, Rumelhart Hinton Williams 1986, Linnainmaa 1970, autograd, how neural networks learn, machine learning mathematics",
+  "hasPart": [
+   {
+    "@type": "Clip",
+    "name": "What is backpropagation?",
+    "startOffset": 0,
+    "endOffset": 18
+   },
+   {
+    "@type": "Clip",
+    "name": "The problem: one weight at a time",
+    "startOffset": 18,
+    "endOffset": 47
+   },
+   {
+    "@type": "Clip",
+    "name": "The chain rule, seen",
+    "startOffset": 47,
+    "endOffset": 70
+   },
+   {
+    "@type": "Clip",
+    "name": "The mathematics, worked by hand",
+    "startOffset": 70,
+    "endOffset": 172
+   },
+   {
+    "@type": "Clip",
+    "name": "Why backwards",
+    "startOffset": 172,
+    "endOffset": 212
+   },
+   {
+    "@type": "Clip",
+    "name": "In industry: reading handwritten digits",
+    "startOffset": 212,
+    "endOffset": 247
+   },
+   {
+    "@type": "Clip",
+    "name": "Today: autograd and the vanishing gradient",
+    "startOffset": 247,
+    "endOffset": 280
+   },
+   {
+    "@type": "Clip",
+    "name": "Recap: what, when and how",
+    "startOffset": 280,
+    "endOffset": 309
+   }
+  ]
+ },
+ {
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+   {
+    "@type": "Question",
+    "name": "What is backpropagation in simple terms?",
+    "acceptedAnswer": {
+     "@type": "Answer",
+     "text": "A way to find out, for every weight in a network, how much the error would change if that weight moved — all in one sweep from the output back to the input."
+    }
+   },
+   {
+    "@type": "Question",
+    "name": "Is backpropagation the same as gradient descent?",
+    "acceptedAnswer": {
+     "@type": "Answer",
+     "text": "No. Backpropagation computes the gradient; gradient descent uses it to update the weights. One supplies the direction, the other takes the step."
+    }
+   },
+   {
+    "@type": "Question",
+    "name": "Who invented backpropagation, and when?",
+    "acceptedAnswer": {
+     "@type": "Answer",
+     "text": "Reverse-mode differentiation was described by Seppo Linnainmaa in 1970. Paul Werbos applied it to neural networks in 1974, and Rumelhart, Hinton and Williams showed its power in Nature in 1986."
+    }
+   },
+   {
+    "@type": "Question",
+    "name": "Why is it called back-propagation?",
+    "acceptedAnswer": {
+     "@type": "Answer",
+     "text": "Because the error signal is propagated backwards: each layer's derivative is computed from the layer after it, reusing work instead of recomputing it."
+    }
+   },
+   {
+    "@type": "Question",
+    "name": "Why does backpropagation need the chain rule?",
+    "acceptedAnswer": {
+     "@type": "Answer",
+     "text": "A network is a composition of functions. The derivative of a composition is the product of the derivatives of its parts, and backpropagation multiplies those parts in the cheapest order."
+    }
+   },
+   {
+    "@type": "Question",
+    "name": "What is the vanishing gradient problem?",
+    "acceptedAnswer": {
+     "@type": "Answer",
+     "text": "Each sigmoid layer multiplies the backward signal by at most a quarter, so after many layers the gradient reaching the early weights is tiny. It is why ReLU, residual connections and normalisation exist."
+    }
+   }
+  ]
+ },
+ {
+  "@context": "https://schema.org",
+  "@type": "LearningResource",
+  "name": "What Is Backpropagation? The Chain Rule That Trains Every Neural Network",
+  "learningResourceType": "Video lesson with interactive experiments",
+  "teaches": "What is backpropagation?",
+  "educationalLevel": "engineer",
+  "citation": [
+   "S. Linnainmaa, master's thesis, University of Helsinki, 1970 (reverse-mode automatic differentiation)",
+   "P. Werbos, Beyond Regression, PhD thesis, Harvard University, 1974",
+   "D. E. Rumelhart, G. E. Hinton, R. J. Williams, Learning representations by back-propagating errors, Nature 323, 1986",
+   "Y. LeCun et al., Backpropagation applied to handwritten zip code recognition, Neural Computation, 1989"
+  ]
+ }
+]</script></head><body><div class="nav"><a class="logo" href="../index.html"><span class="fa">&forall;</span>Avirmath&nbsp;<b>AI</b></a><div class="links"><a href="../index.html#lessons">Lessons</a><a href="../index.html#how">How it works</a><a>Open source</a><a>Sponsor</a></div><div><a class="btn ghost" style="margin-right:10px">Log in</a><a class="btn">Subscribe</a></div></div>
+<div class="wrap"><div class="crumb"><a href="../index.html">Lessons</a> / Foundations · 02</div>
+<div class="lgrid"><nav class="menu"><div class="mt">Lesson</div><a class="on" href="#s0"><span class="n">0</span>Overview &amp; video</a><a href="#s1"><span class="n">1</span>What is backpropagation?</a><a href="#s2"><span class="n">2</span>The problem: one weight at a time</a><a href="#s3"><span class="n">3</span>The chain rule, seen</a><a href="#s4"><span class="n">4</span>The mathematics, worked by hand</a><a href="#s5"><span class="n">5</span>Why backwards</a><a href="#s6"><span class="n">6</span>In industry: reading handwritten digits</a><a href="#s7"><span class="n">7</span>Today: autograd and the vanishing gradient</a><a href="#s8"><span class="n">8</span>Recap: what, when and how</a><a href="#s9"><span class="n">9</span>Assessment</a></nav>
+<div>
+<section class="sec-l" id="s0"><h1 class="ltitle">What Is Backpropagation? The Chain Rule That Trains Every Neural Network</h1><div class="lmeta"><span>5:09 video</span><span>8 sections</span><span>Foundations · 02</span></div>
+<div class="poster"><video id="v" controls preload="metadata" poster="../media/backpropagation/poster.jpg"><source src="../media/backpropagation/video.mp4" type="video/mp4"><track kind="captions" src="../media/backpropagation/captions.vtt" srclang="en" label="English" default></video></div><div class="callout"><b>In one sentence.</b> Backpropagation is the chain rule organised so that one backward sweep gives the derivative of the error with respect to every weight at once — the gradient that gradient descent needs.</div></section>
+<section class="sec-l" id="s1"><div class="k">Section 1 <a onclick="seek(0.0)">&#9654; watch 0:00</a></div><h2>What is backpropagation?</h2><p>What is backpropagation? It is the chain rule, organised so that one backward sweep gives the derivative of the error with respect to every weight in a network, all at once.</p><p>Gradient descent takes the step. Backpropagation supplies the direction. Together they are how every neural network learns.</p></section><section class="sec-l" id="s2"><div class="k">Section 2 <a onclick="seek(18.9)">&#9654; watch 0:18</a></div><h2>The problem: one weight at a time</h2><p>Here is the obvious way to find a slope. Nudge one weight, run the whole network again, and see how the error moved. That is one full pass, for one weight.</p><p>A thousand weights means a thousand and one passes. A billion weights means a billion and one. In nineteen seventy, Seppo Linnainmaa showed there is a better way, and in nineteen seventy-four Paul Werbos applied it to neural networks. One forward pass. One backward pass. Every derivative.</p></section><section class="sec-l" id="s3"><div class="k">Section 3 <a onclick="seek(47.6)">&#9654; watch 0:47</a></div><h2>The chain rule, seen</h2><p>It rests on one fact from calculus. If y depends on u, and u depends on x, then a small nudge in x is scaled once by d u by d x, and again by d y by d u. Rates multiply.</p><p>Watch the nudge travel. It enters at x, is stretched by the first slope, then by the second. The total stretch is the product. A network is just a longer chain.</p><div class="eq" data-tex="\frac{dy}{dx} = \frac{dy}{du}\cdot\frac{du}{dx}"></div></section><section class="sec-l" id="s4"><div class="k">Section 4 <a onclick="seek(70.8)">&#9654; watch 1:10</a></div><h2>The mathematics, worked by hand</h2><p>Take the smallest network that has a hidden layer. Input x, weight w one, a sigmoid, weight w two, output y hat, and a squared error. Two weights. Four stages.</p><p>Forward pass, with numbers. x is 1.5, w one is 0.8, so z is 1.2. The sigmoid gives h equals 0.769. w two is -0.4, so y hat is -0.307. The target is 1. The error is 1.709.</p><p>Now backwards. The error depends on y hat through the square, so d L by d y hat is two times y hat minus y: -2.615.</p><p>y hat is w two times h, so the slope with respect to w two is that number times h: -2.01. The first weight is done.</p><p>To reach w one we must pass through h. The slope with respect to h is d L by d y hat, times w two: 1.046. Keep this number. Everything before h will reuse it.</p><p>h is the sigmoid of z, and the sigmoid&#x27;s slope is sigma times one minus sigma: here 0.178. z is w one times x. Multiply the chain: 1.046, times 0.178, times 1.5. d L by d w one is 0.279.</p><p>Two derivatives, one backward sweep. Hand them to gradient descent with eta equal to 0.5: w one becomes 0.66, w two becomes 0.605, and the error falls from 1.709 to 0.312.</p><div class="eq" data-tex="z = w_1 x,\quad h = \sigma(z),\quad \hat{y} = w_2 h,\quad L = (\hat{y} - y)^{2}"></div><div class="eq" data-tex="\frac{\partial L}{\partial w_2} = \frac{\partial L}{\partial \hat{y}}\cdot h = 2(\hat{y}-y)\,h"></div><div class="eq" data-tex="\frac{\partial L}{\partial h} = \frac{\partial L}{\partial \hat{y}}\cdot w_2"></div><div class="eq" data-tex="\frac{\partial L}{\partial w_1} = \frac{\partial L}{\partial h}\cdot\sigma&#x27;(z)\cdot x"></div><div class="eq" data-tex="\sigma&#x27;(z) = \sigma(z)\,(1-\sigma(z)) \le \tfrac{1}{4}"></div><div class="eq" data-tex="W_l \leftarrow W_l - \eta\,\frac{\partial L}{\partial W_l}"></div></section><section class="sec-l" id="s5"><div class="k">Section 5 <a onclick="seek(172.0)">&#9654; watch 2:52</a></div><h2>Why backwards</h2><p>Notice what we reused. The slope at h was computed once, and every weight upstream of h multiplied by it. In a wide layer, hundreds of weights share the same number.</p><p>Call that shared quantity delta: the slope of the error with respect to a layer&#x27;s inputs. Delta for one layer is the next layer&#x27;s delta, pulled back through its weights, times the sigmoid slope. And the gradient of a weight matrix is simply delta times the layer&#x27;s input. Three lines. Any depth.</p><p>Here is the proof you can run. Take the backward-sweep gradient, and the nudge-and-remeasure gradient, on the same surface. The arrows coincide, to six decimal places.</p><div class="eq" data-tex="\delta_l = (W_{l+1}^{\top}\delta_{l+1}) \odot \sigma&#x27;(z_l), \qquad \frac{\partial L}{\partial W_l} = \delta_l\, h_{l-1}^{\top}"></div></section><section class="sec-l" id="s6"><div class="k">Section 6 <a onclick="seek(212.4)">&#9654; watch 3:32</a></div><h2>In industry: reading handwritten digits</h2><p>In nineteen eighty-six, Rumelhart, Hinton and Williams published this in Nature, and showed that the hidden layers learn useful features on their own. Three years later, Yann LeCun&#x27;s group trained a network by backpropagation to read handwritten postcodes for the United States Postal Service: 9298 digits, about one percent error.</p><p>Here is a small version. 600 noisy eight-by-eight digits, a network with one hidden layer, and nothing but the three lines you just saw. It starts at 61 percent. After 40 passes through the data it reads 91 percent correctly.</p></section><section class="sec-l" id="s7"><div class="k">Section 7 <a onclick="seek(247.4)">&#9654; watch 4:07</a></div><h2>Today: autograd and the vanishing gradient</h2><p>Today nobody writes these derivatives by hand. Frameworks record the forward computation as a graph and run the backward sweep automatically. The algorithm is unchanged, from two weights to hundreds of billions.</p><p>But the chain rule has a cost. Each sigmoid layer multiplies the backward signal by at most a quarter. Six layers deep, the gradient reaching the first weights is thousands of times smaller than at the output. That is the vanishing gradient, and it is why the next lessons exist: better activations, residual connections, normalisation.</p></section><section class="sec-l" id="s8"><div class="k">Section 8 <a onclick="seek(280.3)">&#9654; watch 4:40</a></div><h2>Recap: what, when and how</h2><p>So, what is backpropagation? The chain rule, run backwards through a network, giving every weight&#x27;s derivative in one sweep.</p><p>When? Linnainmaa, nineteen seventy. Werbos, nineteen seventy-four. Rumelhart, Hinton and Williams, nineteen eighty-six. How is it used in A.I.? Every training step of every network: forward pass, backward pass, gradient descent step. Next: vectors and the dot product.</p></section>
+<section class="sec-l" id="s9"><div class="k">Section 9</div><h2>Assessment</h2><p>Answer each question in your own words, then reveal the model answer. Every answer is computed from the lesson's verified mathematics.</p><div class="q"><p>What is backpropagation in simple terms?</p><details><summary>Show answer</summary><div class="a">A way to find out, for every weight in a network, how much the error would change if that weight moved — all in one sweep from the output back to the input.</div></details></div><div class="q"><p>Is backpropagation the same as gradient descent?</p><details><summary>Show answer</summary><div class="a">No. Backpropagation computes the gradient; gradient descent uses it to update the weights. One supplies the direction, the other takes the step.</div></details></div><div class="q"><p>Who invented backpropagation, and when?</p><details><summary>Show answer</summary><div class="a">Reverse-mode differentiation was described by Seppo Linnainmaa in 1970. Paul Werbos applied it to neural networks in 1974, and Rumelhart, Hinton and Williams showed its power in Nature in 1986.</div></details></div><div class="q"><p>Why is it called back-propagation?</p><details><summary>Show answer</summary><div class="a">Because the error signal is propagated backwards: each layer&#x27;s derivative is computed from the layer after it, reusing work instead of recomputing it.</div></details></div><div class="q"><p>Why does backpropagation need the chain rule?</p><details><summary>Show answer</summary><div class="a">A network is a composition of functions. The derivative of a composition is the product of the derivatives of its parts, and backpropagation multiplies those parts in the cheapest order.</div></details></div><div class="q"><p>What is the vanishing gradient problem?</p><details><summary>Show answer</summary><div class="a">Each sigmoid layer multiplies the backward signal by at most a quarter, so after many layers the gradient reaching the early weights is tiny. It is why ReLU, residual connections and normalisation exist.</div></details></div>
+<h3 style="margin-top:28px;font-size:18px">Sources</h3><ul class="src"><li>S. Linnainmaa, master&#x27;s thesis, University of Helsinki, 1970 (reverse-mode automatic differentiation)</li><li>P. Werbos, Beyond Regression, PhD thesis, Harvard University, 1974</li><li>D. E. Rumelhart, G. E. Hinton, R. J. Williams, Learning representations by back-propagating errors, Nature 323, 1986</li><li>Y. LeCun et al., Backpropagation applied to handwritten zip code recognition, Neural Computation, 1989</li></ul></section>
+<div style="height:70px"></div></div></div></div>
+<footer><div><div class="logo" style="font-size:18px"><span class="fa">&forall;</span>Avirmath&nbsp;<b>AI</b></div><p style="margin-top:8px;max-width:38ch">Open-source Ecosystem for Math behind AI. Lessons, experiments and videos generated from verified mathematics.</p></div><div class="fl"><b>Site</b><a href="../index.html">Home</a><a href="../index.html#lessons">Lessons</a><a href="../index.html#how">How it works</a><a>Sponsor</a></div><div class="fl"><b>Open source</b><a>GitHub</a><a>Lesson format</a><a>Contributing</a></div><div class="fl"><b>Follow</b><a>@gangadeviai</a><a>YouTube</a><a>LinkedIn</a><a>RSS</a></div><div class="fc">© 2026 Avirmath AI</div></footer>
+<script>document.querySelectorAll('[data-tex]').forEach(e=>katex.render(e.dataset.tex,e,{throwOnError:false}));
+function seek(t){const v=document.getElementById('v');if(!v)return;v.currentTime=t;v.play();document.getElementById('s0').scrollIntoView({behavior:'smooth'});}
+const links=[...document.querySelectorAll('.menu a')],secs=[...document.querySelectorAll('.sec-l')];
+const obs=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting){links.forEach(l=>l.classList.toggle('on',l.getAttribute('href')==='#'+e.target.id));}}),{rootMargin:'-40% 0px -55% 0px'});secs.forEach(s=>obs.observe(s));</script></body></html>

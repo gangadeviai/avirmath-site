@@ -1,0 +1,210 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>What Is a Vector, and What Is the Dot Product? The Geometry Inside Every AI Model · Avirmath AI</title><meta name="description" content="The dot product of two vectors is the sum of the products of their matching coordinates, which equals the product of their lengths times the cosine of the angle between them. It measures how much two directions agree, and it is the operation inside neurons, embeddings, cosine similarity, attention s">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Source+Serif+4:opsz,wght@8..60,400;8..60,600&family=Space+Grotesk:wght@600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/katex.min.css"><script src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/katex.min.js"></script>
+<style>
+:root{--bg:#FFFFFF;--bg2:#F5F7FB;--ink:#111827;--ink2:#374151;--mute:#5B6472;--line:#E5E7EB;--line2:#CBD5E1;--primary:#2563EB;--primary-2:#1D4ED8;--primary-soft:#EFF4FF;--amber:#B45309;--green:#15803D;--green-soft:#F0FDF4;
+--sans:"Inter",system-ui,sans-serif;--serif:"Source Serif 4",Georgia,serif;--brand:"Space Grotesk",var(--sans)}
+*{box-sizing:border-box;margin:0;padding:0}html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--ink);font-family:var(--sans);font-size:17px;line-height:1.6;-webkit-font-smoothing:antialiased}
+a{color:inherit;text-decoration:none}
+.nav{display:flex;align-items:center;justify-content:space-between;padding:18px 56px;border-bottom:1px solid var(--line);background:#fff;position:sticky;top:0;z-index:15}
+.logo{display:flex;align-items:center;gap:9px;font-family:var(--brand);font-weight:700;font-size:21px}.logo .fa{color:var(--primary);font-size:25px;line-height:1}.logo b{color:var(--primary)}
+.nav .links{display:flex;gap:32px;color:var(--ink2);font-size:15.5px;font-weight:500}.nav .links a:hover{color:var(--primary)}
+.btn{display:inline-flex;align-items:center;gap:8px;background:var(--primary);color:#fff;font-weight:600;padding:12px 22px;border-radius:8px;font-size:15.5px}.btn:hover{background:var(--primary-2)}
+.btn.ghost{background:#fff;color:var(--ink);border:1px solid var(--line2)}
+.wrap{max-width:1160px;margin:0 auto;padding:0 56px}
+.hero{display:grid;grid-template-columns:1fr 1.05fr;gap:56px;align-items:center;padding:80px 0 64px}
+.eyebrow{font-size:13px;letter-spacing:.1em;text-transform:uppercase;color:var(--primary);font-weight:600;margin-bottom:18px}
+.hero h1{font-size:54px;line-height:1.08;letter-spacing:-.025em;font-weight:700}.hero h1 span{color:var(--primary)}
+.hero p{color:var(--ink2);font-size:19px;margin:22px 0 26px;max-width:34em}
+.sub{display:flex;gap:10px;align-items:center;max-width:440px;margin-bottom:18px}.sub input{flex:1;border:1px solid var(--line2);border-radius:8px;padding:11px 14px;font:inherit;font-size:15.5px}
+.updates{display:flex;align-items:center;gap:14px;color:var(--mute);font-size:14px;margin-bottom:30px}.updates a{width:32px;height:32px;border:1px solid var(--line);border-radius:8px;display:grid;place-items:center;color:var(--ink2)}.updates a:hover{border-color:var(--primary);color:var(--primary)}.updates svg{width:16px;height:16px;fill:currentColor}
+.stats{display:flex;gap:40px;padding-top:26px;border-top:1px solid var(--line)}.stats b{display:block;font-size:26px;letter-spacing:-.02em}.stats span{color:var(--mute);font-size:14px}
+.poster{border:1px solid var(--line);border-radius:12px;overflow:hidden;background:#000}.poster video,.poster img{display:block;width:100%}
+.band{background:var(--bg2);border-top:1px solid var(--line);border-bottom:1px solid var(--line);padding:56px 0}
+h2.sec{font-size:34px;letter-spacing:-.02em;margin:0 0 8px;font-weight:700}p.subt{color:var(--ink2);margin-bottom:30px;font-size:18px}
+section.block{padding:72px 0}
+.feed{display:flex;flex-direction:column;gap:18px}
+.post{display:grid;grid-template-columns:300px 1fr;gap:26px;align-items:center;border:1px solid var(--line);border-radius:12px;background:#fff;overflow:hidden;transition:box-shadow .2s,border-color .2s}
+.post:hover{border-color:var(--line2);box-shadow:0 10px 30px rgba(17,24,39,.08)}
+.post img{width:300px;height:100%;object-fit:cover;aspect-ratio:16/10;display:block;background:#0E1117}
+.post .pb{padding:20px 24px 20px 0}.post h3{font-size:22px;letter-spacing:-.015em;margin:8px 0 6px}.post p{color:var(--ink2);font-size:15.5px;max-width:62ch}
+.post .by{display:flex;align-items:center;gap:8px;color:var(--mute);font-size:13.5px;margin-top:12px}.post .by i{width:24px;height:24px;border-radius:50%;background:var(--primary);color:#fff;display:grid;place-items:center;font-style:normal;font-size:12px;font-weight:700}
+.tags{display:flex;gap:8px;flex-wrap:wrap}.t{font-size:12px;font-weight:600;padding:3px 9px;border-radius:999px;border:1px solid var(--line);color:var(--ink2);background:var(--bg2)}.t.live{color:var(--green);border-color:#BBF7D0;background:var(--green-soft)}
+.post.soon img{filter:grayscale(.6);opacity:.7}.post.soon .ph{width:300px;aspect-ratio:16/10;background:var(--bg2);display:grid;place-items:center;color:var(--mute);font-size:14px}
+.pipe{display:grid;grid-template-columns:repeat(6,1fr);margin-top:36px}.pipe .st{padding:22px 18px 20px;border:1px solid var(--line);background:#fff;position:relative}.pipe .st:first-child{border-radius:12px 0 0 12px}.pipe .st:last-child{border-radius:0 12px 12px 0}.pipe .st+.st{border-left:0}
+.pipe .st b{display:block;font-size:15.5px;margin-bottom:6px}.pipe .st span{display:block;color:var(--mute);font-size:13.5px;line-height:1.45}
+.pipe .gate{position:absolute;right:-11px;top:26px;z-index:2;width:22px;height:22px;border-radius:50%;background:#fff;border:2px solid var(--green);color:var(--green);display:grid;place-items:center;font-size:12px;font-weight:700;font-style:normal}.pipe .st:last-child .gate{display:none}
+.principles{display:grid;grid-template-columns:repeat(3,1fr);gap:22px}.principles .p{padding:24px;border:1px solid var(--line);border-radius:12px;background:#fff}.principles .p b{display:block;font-size:17px;margin-bottom:8px}.principles .p span{color:var(--ink2);font-size:15px}
+.trust{display:flex;gap:28px;flex-wrap:wrap;color:var(--ink2);font-size:15px;margin-top:44px}.trust div b{display:block;font-size:30px;letter-spacing:-.02em;color:var(--ink)}
+footer{display:grid;grid-template-columns:1.6fr 1fr 1fr 1fr;gap:28px;align-items:start;padding:44px 56px 36px;border-top:1px solid var(--line);background:var(--bg2);color:var(--mute);font-size:14.5px}
+footer .fl{display:flex;flex-direction:column;gap:8px}footer .fl b{color:var(--ink);margin-bottom:4px}footer .fc{grid-column:1/-1;border-top:1px solid var(--line);padding-top:16px;font-size:13.5px}
+/* lesson */
+.crumb{color:var(--mute);font-size:14.5px;padding:26px 0 12px}.ltitle{font-size:38px;letter-spacing:-.025em;margin-bottom:8px;font-weight:700;max-width:22ch}
+.lmeta{color:var(--mute);font-size:15px;margin-bottom:24px;display:flex;gap:18px;flex-wrap:wrap}
+.lgrid{display:grid;grid-template-columns:240px 1fr;gap:40px;align-items:start;padding-top:8px}
+.menu{position:sticky;top:96px}.menu .mt{font-size:12px;letter-spacing:.1em;text-transform:uppercase;color:var(--mute);font-weight:600;margin:0 0 10px 12px}
+.menu a{display:flex;align-items:center;gap:10px;padding:8px 12px;border-radius:8px;color:var(--ink2);font-size:15px;border-left:2px solid transparent}.menu a:hover{background:var(--bg2)}.menu a.on{color:var(--primary);font-weight:600;background:var(--primary-soft);border-left-color:var(--primary)}
+.menu a .n{width:22px;height:22px;border-radius:50%;border:1.5px solid var(--line2);display:grid;place-items:center;font-size:11px;color:var(--mute);flex:none}
+.sec-l{padding:36px 0;border-top:1px solid var(--line);scroll-margin-top:96px}.sec-l:first-of-type{border-top:0;padding-top:0}
+.sec-l .k{font-size:13px;color:var(--mute);margin-bottom:4px;display:flex;gap:14px;align-items:center}.sec-l .k a{color:var(--primary);font-weight:600;cursor:pointer}
+.sec-l h2{font-size:28px;letter-spacing:-.02em;margin-bottom:14px}.sec-l p{color:var(--ink2);font-size:17.5px;font-family:var(--serif);line-height:1.65;max-width:68ch;margin-bottom:12px}
+.eq{text-align:center;padding:16px;background:var(--bg2);border-radius:8px;margin:14px 0;font-size:20px;border:1px solid var(--line);overflow-x:auto}
+.callout{border-left:3px solid var(--primary);background:var(--primary-soft);padding:14px 18px;border-radius:0 8px 8px 0;margin:16px 0;font-size:15.5px}
+.q{border:1px solid var(--line);border-radius:10px;padding:18px 20px;margin-top:14px}.q p{margin-bottom:12px;font-family:var(--sans);font-size:16.5px;color:var(--ink)}
+.q details{margin-top:6px}.q summary{cursor:pointer;color:var(--primary);font-weight:600;font-size:15px}.q .a{margin-top:8px;color:var(--ink2);font-size:15.5px}
+.src{color:var(--mute);font-size:14px}.src li{margin-left:18px;margin-bottom:4px}
+@media (max-width:900px){.hero,.principles,.pipe,.lgrid{grid-template-columns:1fr!important}.post{grid-template-columns:1fr}.post img,.post.soon .ph{width:100%}.post .pb{padding:18px}.nav,.wrap,footer{padding-left:20px;padding-right:20px}.nav .links{display:none}.menu{position:static}footer{grid-template-columns:1fr 1fr}.hero h1{font-size:38px}}
+</style><script type="application/ld+json">[
+ {
+  "@context": "https://schema.org",
+  "@type": "VideoObject",
+  "name": "What Is a Vector, and What Is the Dot Product? The Geometry Inside Every AI Model",
+  "description": "The dot product of two vectors is the sum of the products of their matching coordinates, which equals the product of their lengths times the cosine of the angle between them. It measures how much two directions agree, and it is the operation inside neurons, embeddings, cosine similarity, attention scores and real-time lighting.",
+  "duration": "PT7M21S",
+  "inLanguage": "en-GB",
+  "transcript": "What is a vector? It is a list of numbers that is also an arrow. Three and four, written as a column, is the same thing as an arrow that goes three across and four up. And what is the dot product? It is the one number that says how much two arrows agree. Positive when they point the same way, zero when they are at right angles, negative when they oppose. Every neuron, every embedding, every attention score is a dot product. Let us see why. In eighteen forty-three, William Rowan Hamilton invented quaternions to multiply directions in space. A year later, Hermann Grassmann published a general algebra of extended quantities. And between eighteen eighty-one and eighteen eighty-four, Willard Gibbs, teaching at Yale, stripped the idea down to what physicists needed: the vector, with a dot product and a cross product. His notation is the one we still use. So a vector has three faces. A point in space. An arrow from the origin to that point. And a column of coordinates. Move the point, and the arrow and the numbers move with it. They are one object. Adding two vectors means adding their coordinates. Geometrically, you place the second arrow at the tip of the first, and the sum runs from the start to the end. Multiplying by a number stretches the arrow. Two times a vector is twice as long in the same direction. Minus one flips it. How long is an arrow? Pythagoras. The vector three, four, has length the square root of nine plus sixteen, which is the square root of twenty-five: five. In three dimensions the same rule applies: one, two, two has length the square root of one plus four plus four, which is three. And in a thousand dimensions, the rule does not change: square every coordinate, add them up, take the square root. Divide a vector by its own length and you get a unit vector: the pure direction, with length one. We will need that in a moment. Here is the first definition. Multiply matching coordinates, and add. Take a, which is three, four, and b, which is four, minus three. Three times four is twelve. Four times minus three is minus twelve. Twelve minus twelve. The dot product is zero. Here is the second definition, and it looks completely different. The length of a, times the length of b, times the cosine of the angle between them. Look at the picture: a and b are at right angles. The cosine of ninety degrees is zero. So again, the dot product is zero. One more, where the answer is not zero. Take a, three, four, and c, two, one. Coordinates: three times two, plus four times one. Six plus four. Ten. Now the geometry: the lengths are five and the square root of five, and the angle between them is 26.6 degrees, whose cosine is 0.894. Five, times root five, times 0.894. Ten again. That is no coincidence. It is a theorem, and the proof is one line. The law of cosines says the squared length of a minus b equals the squared length of a, plus the squared length of b, minus two, times the lengths, times the cosine. Expand the left side in coordinates, cancel the squares, and what remains is exactly: coordinates multiplied and added, equals lengths times cosine. Two definitions, one number. Now the picture that makes the dot product intuitive. Dot a with the unit vector along b, and you get the length of a's shadow on b: the length of a, times the cosine. Watch the angle sweep. When a lines up with b, the shadow is the whole of a, and the number is largest. As the angle opens, the shadow shortens. At ninety degrees, there is no shadow at all: zero. Past ninety, the shadow falls behind, and the number turns negative. So the sign answers one question, same side or opposite side, and the size answers another, how much of a lies along b. That is the whole meaning of the dot product. Divide the dot product by the two lengths, and the lengths cancel out. What is left is the cosine of the angle: a number between minus one and one that cares only about direction. This is cosine similarity. In nineteen seventy-five, Gerard Salton and his colleagues at Cornell proposed treating a document as a vector: one coordinate per word, holding how often the word appears. A search query is a vector too. The best document is the one whose angle to the query is smallest. Here are three short documents, as word-count vectors. The first two share the word gradient and the word loss; their cosine is 0.54. The third repeats chain rule and nothing else; its cosine with the first is only 0. Length does not fool it: a document that says the same words three times points in the same direction. Modern A.I. does the same thing with learned coordinates. In twenty thirteen, Mikolov and colleagues at Google trained vectors for words, and found that arithmetic on them works: king, minus man, plus woman, lands nearest to queen. Here is a small space where that holds exactly: the nearest vector by cosine is queen. Inside a Transformer, every attention score is a dot product. A query vector asks; each key vector answers; the score is the query dot the key, divided by the square root of the dimension. High score, high agreement, more attention. And the humblest unit of all. A neuron multiplies each input by a weight and adds them up. That weighted sum is a dot product: the weights dot the inputs, plus a bias. A layer with a thousand neurons is a thousand dot products. Learning, as we saw last time, is adjusting those weights. Now the real world, in real time. In seventeen sixty, Johann Heinrich Lambert measured how a matte surface reflects light, and found the cosine law: brightness is the dot product of the surface normal and the direction to the light. A face turned toward the light is bright; a face turned sideways is dim; a face turned away is dark. Every pixel of every three-dimensional game you have ever played is lit with this one dot product, billions of times a second, on the graphics processor. Here is a sphere shaded by nothing but n dot l. Move the light, and every pixel recomputes. In industry, the same operation runs search and recommendation. Every product, document, or song is stored as a vector. Your query becomes a vector. A vector database computes the cosine against millions of items and returns the top few. Here is a catalogue of 10,000 items in 64 dimensions; the query vector moves, and the ranking follows it. And in physics, where it began: work is force dot displacement. Push with ten newtons along the floor, move three metres along and four metres up, and only the part of the motion along the push counts: 30 joules. So. A vector is a list of numbers that is also an arrow. The dot product multiplies matching coordinates and adds them, and that equals length times length times the cosine of the angle. Its sign says same side or opposite; its size says how much. When? Hamilton, Grassmann and Gibbs, between eighteen forty-three and eighteen eighty-four. How is it used in A.I.? Every neuron, every embedding comparison, every attention score. And in real time, every lit pixel on your screen. Next: matrices, the machines that move whole spaces.",
+  "keywords": "dot product, what is a vector, scalar product, cosine similarity, projection, vector length, embeddings, word2vec, attention scores, Lambert shading, vector search, semantic search, Gibbs vector analysis, machine learning mathematics",
+  "hasPart": [
+   {
+    "@type": "Clip",
+    "name": "What is a vector? What is the dot product?",
+    "startOffset": 0,
+    "endOffset": 27
+   },
+   {
+    "@type": "Clip",
+    "name": "Where the arrow came from",
+    "startOffset": 27,
+    "endOffset": 65
+   },
+   {
+    "@type": "Clip",
+    "name": "Vector arithmetic and length",
+    "startOffset": 65,
+    "endOffset": 114
+   },
+   {
+    "@type": "Clip",
+    "name": "The dot product: two definitions, one theorem",
+    "startOffset": 114,
+    "endOffset": 202
+   },
+   {
+    "@type": "Clip",
+    "name": "Projection: the shadow",
+    "startOffset": 202,
+    "endOffset": 239
+   },
+   {
+    "@type": "Clip",
+    "name": "Cosine similarity: Salton, 1975",
+    "startOffset": 239,
+    "endOffset": 288
+   },
+   {
+    "@type": "Clip",
+    "name": "Where AI uses it",
+    "startOffset": 288,
+    "endOffset": 339
+   },
+   {
+    "@type": "Clip",
+    "name": "Real time and industry",
+    "startOffset": 339,
+    "endOffset": 406
+   },
+   {
+    "@type": "Clip",
+    "name": "Recap: what, when and how",
+    "startOffset": 406,
+    "endOffset": 441
+   }
+  ]
+ },
+ {
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+   {
+    "@type": "Question",
+    "name": "What is a vector in simple terms?",
+    "acceptedAnswer": {
+     "@type": "Answer",
+     "text": "An ordered list of numbers that you can also draw as an arrow from the origin. Adding vectors adds the numbers; it also places the arrows tip to tail."
+    }
+   },
+   {
+    "@type": "Question",
+    "name": "What does the dot product tell you?",
+    "acceptedAnswer": {
+     "@type": "Answer",
+     "text": "How much two vectors point the same way: positive when they agree, zero when they are perpendicular, negative when they oppose. Divide by the two lengths and you get the cosine of the angle."
+    }
+   },
+   {
+    "@type": "Question",
+    "name": "Why are there two formulas for the dot product?",
+    "acceptedAnswer": {
+     "@type": "Answer",
+     "text": "The coordinate formula and the length-times-cosine formula are the same quantity; the law of cosines proves it, so you can compute with coordinates and reason with angles."
+    }
+   },
+   {
+    "@type": "Question",
+    "name": "What is cosine similarity?",
+    "acceptedAnswer": {
+     "@type": "Answer",
+     "text": "The dot product divided by the two lengths, so only direction counts. Introduced for document retrieval by Salton in 1975, it is how embeddings are compared today."
+    }
+   },
+   {
+    "@type": "Question",
+    "name": "Where is the dot product used in AI?",
+    "acceptedAnswer": {
+     "@type": "Answer",
+     "text": "Every neuron computes a weighted sum, which is a dot product; attention scores in a Transformer are dot products of queries and keys; vector search ranks items by cosine similarity."
+    }
+   },
+   {
+    "@type": "Question",
+    "name": "Where is the dot product used in real time?",
+    "acceptedAnswer": {
+     "@type": "Answer",
+     "text": "Every pixel of a 3D game is lit using Lambert's cosine law, the dot product of the surface normal and the light direction, billions of times per second on a GPU."
+    }
+   }
+  ]
+ },
+ {
+  "@context": "https://schema.org",
+  "@type": "LearningResource",
+  "name": "What Is a Vector, and What Is the Dot Product? The Geometry Inside Every AI Model",
+  "learningResourceType": "Video lesson with interactive experiments",
+  "teaches": "What is the dot product?",
+  "educationalLevel": "engineer",
+  "citation": [
+   "W. R. Hamilton, quaternions, 1843; H. Grassmann, Die lineale Ausdehnungslehre, 1844",
+   "J. W. Gibbs, Elements of Vector Analysis, privately printed 1881–1884; E. B. Wilson, Vector Analysis, 1901",
+   "J. H. Lambert, Photometria, 1760",
+   "G. Salton, A. Wong, C. S. Yang, A vector space model for automatic indexing, Communications of the ACM, 1975",
+   "T. Mikolov et al., Efficient estimation of word representations in vector space, 2013",
+   "A. Vaswani et al., Attention is all you need, 2017"
+  ]
+ }
+]</script></head><body><div class="nav"><a class="logo" href="../index.html"><span class="fa">&forall;</span>Avirmath&nbsp;<b>AI</b></a><div class="links"><a href="../index.html#lessons">Lessons</a><a href="../index.html#how">How it works</a><a>Open source</a><a>Sponsor</a></div><div><a class="btn ghost" style="margin-right:10px">Log in</a><a class="btn">Subscribe</a></div></div>
+<div class="wrap"><div class="crumb"><a href="../index.html">Lessons</a> / Foundations · 03</div>
+<div class="lgrid"><nav class="menu"><div class="mt">Lesson</div><a class="on" href="#s0"><span class="n">0</span>Overview &amp; video</a><a href="#s1"><span class="n">1</span>What is a vector? What is the dot product?</a><a href="#s2"><span class="n">2</span>Where the arrow came from</a><a href="#s3"><span class="n">3</span>Vector arithmetic and length</a><a href="#s4"><span class="n">4</span>The dot product: two definitions, one theorem</a><a href="#s5"><span class="n">5</span>Projection: the shadow</a><a href="#s6"><span class="n">6</span>Cosine similarity: Salton, 1975</a><a href="#s7"><span class="n">7</span>Where AI uses it</a><a href="#s8"><span class="n">8</span>Real time and industry</a><a href="#s9"><span class="n">9</span>Recap: what, when and how</a><a href="#s10"><span class="n">10</span>Assessment</a></nav>
+<div>
+<section class="sec-l" id="s0"><h1 class="ltitle">What Is a Vector, and What Is the Dot Product? The Geometry Inside Every AI Model</h1><div class="lmeta"><span>7:21 video</span><span>9 sections</span><span>Foundations · 03</span></div>
+<div class="poster"><video id="v" controls preload="metadata" poster="../media/vectors-dot-product/poster.jpg"><source src="../media/vectors-dot-product/video.mp4" type="video/mp4"><track kind="captions" src="../media/vectors-dot-product/captions.vtt" srclang="en" label="English" default></video></div><div class="callout"><b>In one sentence.</b> A vector is a list of numbers that is also an arrow, and the dot product is the one number that says how much two arrows agree. Every neuron, every embedding lookup and every attention score is a dot product.</div></section>
+<section class="sec-l" id="s1"><div class="k">Section 1 <a onclick="seek(0.0)">&#9654; watch 0:00</a></div><h2>What is a vector? What is the dot product?</h2><p>What is a vector? It is a list of numbers that is also an arrow. Three and four, written as a column, is the same thing as an arrow that goes three across and four up.</p><p>And what is the dot product? It is the one number that says how much two arrows agree. Positive when they point the same way, zero when they are at right angles, negative when they oppose. Every neuron, every embedding, every attention score is a dot product. Let us see why.</p></section><section class="sec-l" id="s2"><div class="k">Section 2 <a onclick="seek(27.3)">&#9654; watch 0:27</a></div><h2>Where the arrow came from</h2><p>In eighteen forty-three, William Rowan Hamilton invented quaternions to multiply directions in space. A year later, Hermann Grassmann published a general algebra of extended quantities. And between eighteen eighty-one and eighteen eighty-four, Willard Gibbs, teaching at Yale, stripped the idea down to what physicists needed: the vector, with a dot product and a cross product. His notation is the one we still use.</p><p>So a vector has three faces. A point in space. An arrow from the origin to that point. And a column of coordinates. Move the point, and the arrow and the numbers move with it. They are one object.</p></section><section class="sec-l" id="s3"><div class="k">Section 3 <a onclick="seek(65.2)">&#9654; watch 1:05</a></div><h2>Vector arithmetic and length</h2><p>Adding two vectors means adding their coordinates. Geometrically, you place the second arrow at the tip of the first, and the sum runs from the start to the end.</p><p>Multiplying by a number stretches the arrow. Two times a vector is twice as long in the same direction. Minus one flips it.</p><p>How long is an arrow? Pythagoras. The vector three, four, has length the square root of nine plus sixteen, which is the square root of twenty-five: five. In three dimensions the same rule applies: one, two, two has length the square root of one plus four plus four, which is three. And in a thousand dimensions, the rule does not change: square every coordinate, add them up, take the square root.</p><p>Divide a vector by its own length and you get a unit vector: the pure direction, with length one. We will need that in a moment.</p><div class="eq" data-tex="\|\mathbf{a}\| = \sqrt{a_1^{2} + a_2^{2} + \cdots + a_n^{2}}"></div></section><section class="sec-l" id="s4"><div class="k">Section 4 <a onclick="seek(114.4)">&#9654; watch 1:54</a></div><h2>The dot product: two definitions, one theorem</h2><p>Here is the first definition. Multiply matching coordinates, and add. Take a, which is three, four, and b, which is four, minus three. Three times four is twelve. Four times minus three is minus twelve. Twelve minus twelve. The dot product is zero.</p><p>Here is the second definition, and it looks completely different. The length of a, times the length of b, times the cosine of the angle between them. Look at the picture: a and b are at right angles. The cosine of ninety degrees is zero. So again, the dot product is zero.</p><p>One more, where the answer is not zero. Take a, three, four, and c, two, one. Coordinates: three times two, plus four times one. Six plus four. Ten. Now the geometry: the lengths are five and the square root of five, and the angle between them is 26.6 degrees, whose cosine is 0.894. Five, times root five, times 0.894. Ten again.</p><p>That is no coincidence. It is a theorem, and the proof is one line. The law of cosines says the squared length of a minus b equals the squared length of a, plus the squared length of b, minus two, times the lengths, times the cosine. Expand the left side in coordinates, cancel the squares, and what remains is exactly: coordinates multiplied and added, equals lengths times cosine. Two definitions, one number.</p><div class="eq" data-tex="\mathbf{a}\cdot\mathbf{b} = a_1 b_1 + a_2 b_2 + \cdots + a_n b_n"></div><div class="eq" data-tex="\mathbf{a}\cdot\mathbf{b} = \|\mathbf{a}\|\,\|\mathbf{b}\|\cos\theta"></div><div class="eq" data-tex="\|\mathbf{a}-\mathbf{b}\|^{2} = \|\mathbf{a}\|^{2} + \|\mathbf{b}\|^{2} - 2\,\mathbf{a}\cdot\mathbf{b}"></div></section><section class="sec-l" id="s5"><div class="k">Section 5 <a onclick="seek(202.2)">&#9654; watch 3:22</a></div><h2>Projection: the shadow</h2><p>Now the picture that makes the dot product intuitive. Dot a with the unit vector along b, and you get the length of a&#x27;s shadow on b: the length of a, times the cosine. Watch the angle sweep.</p><p>When a lines up with b, the shadow is the whole of a, and the number is largest. As the angle opens, the shadow shortens. At ninety degrees, there is no shadow at all: zero. Past ninety, the shadow falls behind, and the number turns negative.</p><p>So the sign answers one question, same side or opposite side, and the size answers another, how much of a lies along b. That is the whole meaning of the dot product.</p><div class="eq" data-tex="\text{shadow of } \mathbf{a} \text{ on } \mathbf{b} = \mathbf{a}\cdot\hat{\mathbf{b}} = \|\mathbf{a}\|\cos\theta"></div></section><section class="sec-l" id="s6"><div class="k">Section 6 <a onclick="seek(239.8)">&#9654; watch 3:59</a></div><h2>Cosine similarity: Salton, 1975</h2><p>Divide the dot product by the two lengths, and the lengths cancel out. What is left is the cosine of the angle: a number between minus one and one that cares only about direction. This is cosine similarity.</p><p>In nineteen seventy-five, Gerard Salton and his colleagues at Cornell proposed treating a document as a vector: one coordinate per word, holding how often the word appears. A search query is a vector too. The best document is the one whose angle to the query is smallest.</p><p>Here are three short documents, as word-count vectors. The first two share the word gradient and the word loss; their cosine is 0.54. The third repeats chain rule and nothing else; its cosine with the first is only 0. Length does not fool it: a document that says the same words three times points in the same direction.</p><div class="eq" data-tex="\cos\theta = \frac{\mathbf{a}\cdot\mathbf{b}}{\|\mathbf{a}\|\,\|\mathbf{b}\|}"></div></section><section class="sec-l" id="s7"><div class="k">Section 7 <a onclick="seek(288.1)">&#9654; watch 4:48</a></div><h2>Where AI uses it</h2><p>Modern A.I. does the same thing with learned coordinates. In twenty thirteen, Mikolov and colleagues at Google trained vectors for words, and found that arithmetic on them works: king, minus man, plus woman, lands nearest to queen. Here is a small space where that holds exactly: the nearest vector by cosine is queen.</p><p>Inside a Transformer, every attention score is a dot product. A query vector asks; each key vector answers; the score is the query dot the key, divided by the square root of the dimension. High score, high agreement, more attention.</p><p>And the humblest unit of all. A neuron multiplies each input by a weight and adds them up. That weighted sum is a dot product: the weights dot the inputs, plus a bias. A layer with a thousand neurons is a thousand dot products. Learning, as we saw last time, is adjusting those weights.</p><div class="eq" data-tex="\text{score}_{ij} = \frac{\mathbf{q}_i\cdot\mathbf{k}_j}{\sqrt{d_k}}"></div><div class="eq" data-tex="z = \mathbf{w}\cdot\mathbf{x} + b"></div></section><section class="sec-l" id="s8"><div class="k">Section 8 <a onclick="seek(339.4)">&#9654; watch 5:39</a></div><h2>Real time and industry</h2><p>Now the real world, in real time. In seventeen sixty, Johann Heinrich Lambert measured how a matte surface reflects light, and found the cosine law: brightness is the dot product of the surface normal and the direction to the light. A face turned toward the light is bright; a face turned sideways is dim; a face turned away is dark.</p><p>Every pixel of every three-dimensional game you have ever played is lit with this one dot product, billions of times a second, on the graphics processor. Here is a sphere shaded by nothing but n dot l. Move the light, and every pixel recomputes.</p><p>In industry, the same operation runs search and recommendation. Every product, document, or song is stored as a vector. Your query becomes a vector. A vector database computes the cosine against millions of items and returns the top few. Here is a catalogue of 10,000 items in 64 dimensions; the query vector moves, and the ranking follows it.</p><p>And in physics, where it began: work is force dot displacement. Push with ten newtons along the floor, move three metres along and four metres up, and only the part of the motion along the push counts: 30 joules.</p><div class="eq" data-tex="I = \max(0,\ \mathbf{n}\cdot\mathbf{l})"></div></section><section class="sec-l" id="s9"><div class="k">Section 9 <a onclick="seek(406.3)">&#9654; watch 6:46</a></div><h2>Recap: what, when and how</h2><p>So. A vector is a list of numbers that is also an arrow. The dot product multiplies matching coordinates and adds them, and that equals length times length times the cosine of the angle. Its sign says same side or opposite; its size says how much.</p><p>When? Hamilton, Grassmann and Gibbs, between eighteen forty-three and eighteen eighty-four. How is it used in A.I.? Every neuron, every embedding comparison, every attention score. And in real time, every lit pixel on your screen. Next: matrices, the machines that move whole spaces.</p></section>
+<section class="sec-l" id="s10"><div class="k">Section 10</div><h2>Assessment</h2><p>Answer each question in your own words, then reveal the model answer. Every answer is computed from the lesson's verified mathematics.</p><div class="q"><p>What is a vector in simple terms?</p><details><summary>Show answer</summary><div class="a">An ordered list of numbers that you can also draw as an arrow from the origin. Adding vectors adds the numbers; it also places the arrows tip to tail.</div></details></div><div class="q"><p>What does the dot product tell you?</p><details><summary>Show answer</summary><div class="a">How much two vectors point the same way: positive when they agree, zero when they are perpendicular, negative when they oppose. Divide by the two lengths and you get the cosine of the angle.</div></details></div><div class="q"><p>Why are there two formulas for the dot product?</p><details><summary>Show answer</summary><div class="a">The coordinate formula and the length-times-cosine formula are the same quantity; the law of cosines proves it, so you can compute with coordinates and reason with angles.</div></details></div><div class="q"><p>What is cosine similarity?</p><details><summary>Show answer</summary><div class="a">The dot product divided by the two lengths, so only direction counts. Introduced for document retrieval by Salton in 1975, it is how embeddings are compared today.</div></details></div><div class="q"><p>Where is the dot product used in AI?</p><details><summary>Show answer</summary><div class="a">Every neuron computes a weighted sum, which is a dot product; attention scores in a Transformer are dot products of queries and keys; vector search ranks items by cosine similarity.</div></details></div><div class="q"><p>Where is the dot product used in real time?</p><details><summary>Show answer</summary><div class="a">Every pixel of a 3D game is lit using Lambert&#x27;s cosine law, the dot product of the surface normal and the light direction, billions of times per second on a GPU.</div></details></div>
+<h3 style="margin-top:28px;font-size:18px">Sources</h3><ul class="src"><li>W. R. Hamilton, quaternions, 1843; H. Grassmann, Die lineale Ausdehnungslehre, 1844</li><li>J. W. Gibbs, Elements of Vector Analysis, privately printed 1881–1884; E. B. Wilson, Vector Analysis, 1901</li><li>J. H. Lambert, Photometria, 1760</li><li>G. Salton, A. Wong, C. S. Yang, A vector space model for automatic indexing, Communications of the ACM, 1975</li><li>T. Mikolov et al., Efficient estimation of word representations in vector space, 2013</li><li>A. Vaswani et al., Attention is all you need, 2017</li></ul></section>
+<div style="height:70px"></div></div></div></div>
+<footer><div><div class="logo" style="font-size:18px"><span class="fa">&forall;</span>Avirmath&nbsp;<b>AI</b></div><p style="margin-top:8px;max-width:38ch">Open-source Ecosystem for Math behind AI. Lessons, experiments and videos generated from verified mathematics.</p></div><div class="fl"><b>Site</b><a href="../index.html">Home</a><a href="../index.html#lessons">Lessons</a><a href="../index.html#how">How it works</a><a>Sponsor</a></div><div class="fl"><b>Open source</b><a>GitHub</a><a>Lesson format</a><a>Contributing</a></div><div class="fl"><b>Follow</b><a>@gangadeviai</a><a>YouTube</a><a>LinkedIn</a><a>RSS</a></div><div class="fc">© 2026 Avirmath AI</div></footer>
+<script>document.querySelectorAll('[data-tex]').forEach(e=>katex.render(e.dataset.tex,e,{throwOnError:false}));
+function seek(t){const v=document.getElementById('v');if(!v)return;v.currentTime=t;v.play();document.getElementById('s0').scrollIntoView({behavior:'smooth'});}
+const links=[...document.querySelectorAll('.menu a')],secs=[...document.querySelectorAll('.sec-l')];
+const obs=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting){links.forEach(l=>l.classList.toggle('on',l.getAttribute('href')==='#'+e.target.id));}}),{rootMargin:'-40% 0px -55% 0px'});secs.forEach(s=>obs.observe(s));</script></body></html>
